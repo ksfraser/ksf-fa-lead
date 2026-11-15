@@ -113,7 +113,7 @@ final class LeadService
                     'leadSource' => _('Lead Source'),
                     'leadStatus' => _('Lead Status'),
                     'rating'     => _('Rating'),
-                    'company'    => _('Company / Industry'),
+            'company'    => _('Company'),
                     'contact'    => _('Assigned To'),
                 ),
                 'url'    => '/modules/ksf_FA_Lead/pages/lead_form.php?action=edit&lead_id=' . $lead->id,
