@@ -13,11 +13,15 @@ use Ksfraser\FrontAccounting\Lead\DTO\LeadDTO;
  *
  * @package Ksfraser\FrontAccounting\Lead\Repository
  * @since   1.0.0
+ * @BABOK Related: BR-LD-004
  */
 final class LeadRepository
 {
     private string $table = 'ksf_crm_leads';
 
+    /**
+     * @BABOK Related: BR-LD-004
+     */
     public function findAll(): array
     {
         if (!function_exists('db_query') || !defined('TB_PREF')) {
@@ -38,6 +42,9 @@ final class LeadRepository
         return $rows;
     }
 
+    /**
+     * @BABOK Related: BR-LD-004
+     */
     public function findById(int $id): ?array
     {
         if (!function_exists('db_query') || !defined('TB_PREF')) {
@@ -54,6 +61,9 @@ final class LeadRepository
         return $row === false ? null : $row;
     }
 
+    /**
+     * @BABOK Related: BR-LD-004
+     */
     public function save(array $data): int
     {
         if (!function_exists('db_query') || !defined('TB_PREF')) {
@@ -82,6 +92,9 @@ final class LeadRepository
         return db_insert_id();
     }
 
+    /**
+     * @BABOK Related: BR-LD-004
+     */
     public function update(int $id, array $data): void
     {
         if (!function_exists('db_query') || !defined('TB_PREF')) {
@@ -110,6 +123,9 @@ final class LeadRepository
         db_query($sql, 'Could not update lead');
     }
 
+    /**
+     * @BABOK Related: BR-LD-004
+     */
     public function delete(int $id): void
     {
         if (!function_exists('db_query') || !defined('TB_PREF')) {

@@ -9,6 +9,7 @@ namespace Ksfraser\FrontAccounting\Lead\DTO;
  *
  * @package Ksfraser\FrontAccounting\Lead\DTO
  * @since   1.0.0
+ * @BABOK Related: BR-LD-002
  */
 final class LeadDTO
 {
@@ -28,6 +29,9 @@ final class LeadDTO
     public $notes;
     public $createdAt;
 
+    /**
+     * @BABOK Related: BR-LD-002
+     */
     public function __construct(
         int $id,
         string $leadSource = '',
@@ -62,6 +66,9 @@ final class LeadDTO
         $this->createdAt    = $createdAt;
     }
 
+    /**
+     * @BABOK Related: BR-LD-002
+     */
     public function getDisplayLabel(): string
     {
         $parts = array();
@@ -80,6 +87,9 @@ final class LeadDTO
         return implode(' — ', $parts);
     }
 
+    /**
+     * @BABOK Related: BR-LD-002
+     */
     public function toArray(): array
     {
         return array(
@@ -101,6 +111,9 @@ final class LeadDTO
         );
     }
 
+    /**
+     * @BABOK Related: BR-LD-002
+     */
     public static function fromArray(array $data): self
     {
         return new self(

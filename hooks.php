@@ -35,18 +35,35 @@ if (!defined('SA_LEAD_VIEW')) {
     define('SA_LEAD_MANAGE', SS_ksf_FA_Lead | 2);
 }
 
+/**
+ * Lead module hooks — owns the 'lead' type in RelatedTo, answers
+ * RELATED_TO_FIELDS, LEAD_RESOLVE and LEAD_FIELDS.
+ *
+ * @package KsfFA_ksf_FA_Lead
+ * @version 1.0.0
+ * @BABOK Related: BR-LD-001
+ */
 class hooks_ksf_FA_Lead extends hooks {
     const RESPONDERS = array('RELATED_TO_FIELDS', 'LEAD_RESOLVE', 'LEAD_FIELDS');
 
     var $module_name = 'ksf_FA_Lead';
     var $version = '1.0.0';
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     function install_tabs($app) {
     }
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     function install_options($app) {
     }
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     function install_access() {
         $security_sections[SS_ksf_FA_Lead] = _("Lead Management");
         $security_areas['SA_LEAD_VIEW'] = array(SA_LEAD_VIEW, _("View leads"));
@@ -55,6 +72,9 @@ class hooks_ksf_FA_Lead extends hooks {
         return array($security_areas, $security_sections);
     }
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     function activate_extension($company, $check_only = true) {
         if ($check_only) {
             return true;
@@ -73,6 +93,9 @@ class hooks_ksf_FA_Lead extends hooks {
         \ksfraser\FrontAccounting\Lead\Utils\ComposerDependencies::ensure(__DIR__);
     }
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     public function getModuleConstants(&$data, $opts = null) {
         $data['constants'] = array(
             'SS_ksf_FA_Lead' => SS_ksf_FA_Lead,
@@ -82,11 +105,17 @@ class hooks_ksf_FA_Lead extends hooks {
         return true;
     }
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     public function getModuleCapabilities(&$data, $opts = null) {
         $data['capabilities'] = self::RESPONDERS;
         return true;
     }
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     public function hasCapability(&$data, $opts = null) {
         $capability = is_array($opts) && isset($opts['capability']) ? $opts['capability'] : null;
         if ($capability === null && isset($data['capability'])) {
@@ -96,6 +125,9 @@ class hooks_ksf_FA_Lead extends hooks {
         return $data['has_capability'];
     }
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     public function respondToCapabilityRequest(&$data, $opts = null) {
         $request = is_array($opts) && isset($opts['request'])
             ? $opts['request']
@@ -125,9 +157,10 @@ class hooks_ksf_FA_Lead extends hooks {
      *
      * @param array $data Modified by reference
      * @param array|null $opts
-     * @return null
-     * @since 1.0.0
-     */
+ * @return null
+ * @since 1.0.0
+ * @BABOK Related: BR-LD-001
+ */
     public function RELATED_TO_FIELDS(&$data, $opts = null) {
         if (!isset($data['module']) || !is_string($data['module'])) {
             $data['error'] = 'RELATED_TO_FIELDS requires data[module]';
@@ -158,9 +191,10 @@ class hooks_ksf_FA_Lead extends hooks {
      *
      * @param array $data Modified by reference
      * @param array|null $opts
-     * @return null
-     * @since 1.0.0
-     */
+ * @return null
+ * @since 1.0.0
+ * @BABOK Related: BR-LD-001
+ */
     public function LEAD_RESOLVE(&$data, $opts = null) {
         if (!isset($data['lead_id']) || !is_numeric($data['lead_id'])) {
             $data['error'] = 'LEAD_RESOLVE requires data[lead_id]';
@@ -186,9 +220,10 @@ class hooks_ksf_FA_Lead extends hooks {
      *
      * @param array $data Modified by reference
      * @param array|null $opts
-     * @return null
-     * @since 1.0.0
-     */
+ * @return null
+ * @since 1.0.0
+ * @BABOK Related: BR-LD-001
+ */
     public function LEAD_FIELDS(&$data, $opts = null) {
         $data['fields'] = array(
             'leadSource' => _('Lead Source'),

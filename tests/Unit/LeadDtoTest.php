@@ -97,6 +97,10 @@ class LeadRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $this->repo = new LeadRepository();
+        $GLOBALS['KSF_DB_LAST_SQL']   = null;
+        $GLOBALS['KSF_DB_RESULT']     = false;
+        $GLOBALS['KSF_DB_ROWS']       = array();
+        $GLOBALS['KSF_DB_INSERT_ID']  = 1;
     }
 
     public function testFindByIdZeroReturnsNull(): void
@@ -124,5 +128,107 @@ class LeadRepositoryTest extends TestCase
 
         // Can't easily test private method; just verify class loads
         $this->assertInstanceOf(LeadRepository::class, $this->repo);
+    }
+
+    private function row(array $overrides = array()): array
+    {
+        return array_merge(array(
+            'id'            => 1,
+            'lead_source'   => 'Web',
+            'lead_status'   => 'new',
+            'rating'        => 'hot',
+            'annual_revenue'=> '0',
+            'employee_count'=> '0',
+            'industry'      => 'Acme',
+            'website'       => '',
+            'phone'         => '',
+            'email'         => '',
+            'address'       => '',
+            'assigned_to'   => 'jsmith',
+            'campaign_id'   => '0',
+            'notes'         => '',
+            'created_at'    => '2026-01-01',
+        ), $overrides);
+    }
+
+    public function testFindAllReturnsRows(): void
+    {
+        $GLOBALS['KSF_DB_RESULT'] = true;
+        $GLOBALS['KSF_DB_ROWS']   = array($this->row(), $this->row(array('id' => 2)));
+
+        $rows = $this->repo->findAll();
+
+        $this->assertCount(2, $rows);
+        $this->assertSame(1, $rows[0]['id']);
+        $this->assertSame(2, $rows[1]['id']);
+        $this->assertStringContainsString(
+            'SELECT * FROM ' . TB_PREF . 'ksf_crm_leads ORDER BY created_at DESC, id DESC',
+            $GLOBALS['KSF_DB_LAST_SQL']
+        );
+    }
+
+    public function testFindByIdReturnsRow(): void
+    {
+        $GLOBALS['KSF_DB_RESULT'] = true;
+        $GLOBALS['KSF_DB_ROWS']   = array($this->row(array('id' => 7)));
+
+        $row = $this->repo->findById(7);
+
+        $this->assertSame(7, $row['id']);
+        $this->assertStringContainsString('WHERE id = 7', $GLOBALS['KSF_DB_LAST_SQL']);
+    }
+
+    public function testSaveInsertsAndReturnsInsertId(): void
+    {
+        $GLOBALS['KSF_DB_RESULT']   = true;
+        $GLOBALS['KSF_DB_INSERT_ID'] = 42;
+
+        $data = array(
+            'lead_source'   => 'Web',
+            'lead_status'   => 'new',
+            'rating'        => 'hot',
+            'annual_revenue'=> '100000',
+            'employee_count'=> 50,
+            'industry'      => 'Acme',
+            'website'       => 'https://example.com',
+            'phone'         => '555-0100',
+            'email'         => 'sales@example.com',
+            'address'       => '123 Main St',
+            'assigned_to'   => 'jsmith',
+            'campaign_id'   => 7,
+            'notes'         => 'Hot lead',
+        );
+
+        $id = $this->repo->save($data);
+
+        $this->assertSame(42, $id);
+        $sql = $GLOBALS['KSF_DB_LAST_SQL'];
+        $this->assertStringContainsString('INSERT INTO ' . TB_PREF . 'ksf_crm_leads', $sql);
+        $this->assertStringContainsString("lead_status = 'new'", $sql);
+        $this->assertStringContainsString('employee_count = 50', $sql);
+        $this->assertStringContainsString('campaign_id = 7', $sql);
+    }
+
+    public function testUpdateBuildsUpdateSql(): void
+    {
+        $this->repo->update(5, array(
+            'lead_status' => 'qualified',
+            'rating'      => 'cold',
+        ));
+
+        $sql = $GLOBALS['KSF_DB_LAST_SQL'];
+        $this->assertStringContainsString('UPDATE ' . TB_PREF . 'ksf_crm_leads', $sql);
+        $this->assertStringContainsString("lead_status = 'qualified'", $sql);
+        $this->assertStringContainsString("rating = 'cold'", $sql);
+        $this->assertStringContainsString('WHERE id = 5', $sql);
+    }
+
+    public function testDeleteBuildsDeleteSql(): void
+    {
+        $this->repo->delete(5);
+
+        $sql = $GLOBALS['KSF_DB_LAST_SQL'];
+        $this->assertStringContainsString('DELETE FROM ' . TB_PREF . 'ksf_crm_leads', $sql);
+        $this->assertStringContainsString('WHERE id = 5', $sql);
     }
 }

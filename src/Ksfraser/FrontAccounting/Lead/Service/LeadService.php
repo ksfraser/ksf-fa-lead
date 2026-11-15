@@ -18,17 +18,24 @@ use ksfraser\RelatedTo\DTO\RelatedRecordDto;
  *
  * @package Ksfraser\FrontAccounting\Lead\Service
  * @since   1.0.0
+ * @BABOK Related: BR-LD-001
  */
 final class LeadService
 {
     /** @var LeadRepository */
     private $repo;
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     public function __construct(?LeadRepository $repo = null)
     {
         $this->repo = $repo ?? new LeadRepository();
     }
 
+    /**
+     * @BABOK Related: BR-LD-001
+     */
     public function resolveById(int $leadId, ?RelatedRecordDto $dto = null): array
     {
         $row = $this->repo->findById($leadId);
@@ -77,6 +84,9 @@ final class LeadService
         );
     }
 
+    /**
+     * @BABOK Related: BR-LD-003
+     */
     public function listAll(): array
     {
         $rows = $this->repo->findAll();
@@ -113,6 +123,9 @@ final class LeadService
         return $results;
     }
 
+    /**
+     * @BABOK Related: BR-LD-003
+     */
     public function fieldMap(): array
     {
         return array(
